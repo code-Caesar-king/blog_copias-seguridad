@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataMigration Blog – Técnicas de Migración de Datos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0f0e0d;
+    --white: #fafaf8;
+    --ink: #1a1917;
+    --muted: #6b6a68;
+    --accent: #c84b2f;
+    --accent-light: #f5ede9;
+    --border: #e4e3df;
+    --card-bg: #ffffff;
+    --tag-bg: #f0ede8;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  body {
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* HERO */
+  .hero {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 5rem 2rem 3.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-meta {
+    display: flex; align-items: center; gap: 1rem;
+    font-size: 0.82rem; color: var(--muted); margin-bottom: 1.5rem;
+  }
+  .hero-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+  .hero-lead {
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: #3a3937;
+    line-height: 1.8;
+    max-width: 620px;
+  }
+
+  /* LAYOUT */
+  .layout {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+  }
+
+  /* SECTION */
+  .section { margin-bottom: 3.5rem; }
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  .section h2 {
+    font-family: var(--serif);
+    font-size: 1.75rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .section p { color: #3a3937; font-weight: 300; margin-bottom: 1rem; }
+  .section p:last-child { margin-bottom: 0; }
+
+  /* DIVIDER */
+  .divider {
+    width: 48px; height: 2px;
+    background: var(--accent);
+    margin: 3rem 0;
+  }
+
+  /* PULL QUOTE */
+  .pull-quote {
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    background: var(--accent-light);
+    border-radius: 0 4px 4px 0;
+  }
+  .pull-quote p {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--ink);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* TÉCNICAS CARDS */
+  .tecnicas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  .tecnica-card {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    transition: background 0.2s;
+  }
+  .tecnica-card:hover { background: #fdf9f7; }
+  .tecnica-num {
+    font-family: var(--serif);
+    font-size: 2rem;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    user-select: none;
+  }
+  .tecnica-card h3 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  .tecnica-card p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    font-weight: 400;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ETAPAS TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin: 1.5rem 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 1.75rem;
+    padding-bottom: 0.25rem;
+  }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -2rem; top: 5px;
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--accent);
+  }
+  .timeline-item h3 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.01em;
+  }
+  .timeline-item p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin: 0;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  /* ESTRATEGIAS */
+  .estrategias-list { margin: 1.5rem 0; }
+  .estrategia {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .estrategia:last-child { border-bottom: none; }
+  .estrategia-icon {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 4px;
+    background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .estrategia-icon svg { width: 18px; height: 18px; }
+  .estrategia h3 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.01em;
+  }
+  .estrategia p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* TAGS */
+  .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2.5rem; }
+  .tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--tag-bg);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  footer span { color: var(--accent); }
+
+  /* FADE IN */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero, .section { animation: fadeUp 0.6s ease both; }
+  .section:nth-child(1) { animation-delay: 0.1s; }
+  .section:nth-child(2) { animation-delay: 0.18s; }
+  .section:nth-child(3) { animation-delay: 0.26s; }
+  .section:nth-child(4) { animation-delay: 0.34s; }
+  .section:nth-child(5) { animation-delay: 0.42s; }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 1rem; }
+    .nav-links { display: none; }
+    .hero, .layout { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .hero { padding-top: 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">Data<span>.</span>Blog</a>
+  <ul class="nav-links">
+    <li><a href="#">Inicio</a></li>
+    <li><a href="#">Artículos</a></li>
+    <li><a href="#">Bases de datos</a></li>
+    <li><a href="#">Contacto</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <span class="hero-tag">Bases de Datos · ADSI</span>
+  <h1>Técnicas de <em>Migración</em> de Datos</h1>
+  <div class="hero-meta">
+    <span>10 de abril de 2026</span>
+    <span class="dot"></span>
+    <span>Lectura de 8 min</span>
+    <span class="dot"></span>
+    <span>SENA – FAVA</span>
+  </div>
+  <p class="hero-lead">
+    Mover datos entre sistemas es una de las tareas más críticas en el ciclo de vida del software. 
+    Exploraremos en detalle las metodologías, técnicas y estrategias que hacen posible una migración exitosa, 
+    sin pérdida de información y con máxima integridad.
+  </p>
+</header>
+
+<main class="layout">
+
+  <!-- SECCIÓN 1: QUÉ ES -->
+  <section class="section">
+    <p class="section-label">01 — Fundamentos</p>
+    <h2>¿Qué es la migración de datos?</h2>
+    <p>
+      La migración de datos es el proceso mediante el cual volúmenes de información son trasladados 
+      desde sistemas existentes hacia otros sistemas destino. Este proceso abarca la extracción, 
+      transformación, carga y limpieza de los datos.
+    </p>
+    <p>
+      Algunas situaciones comunes que la desencadenan: pasar de Oracle a SQL Server, cargar archivos 
+      Excel a una base de datos transaccional, o actualizar la versión de un sistema que cambia 
+      la estructura de sus tablas.
+    </p>
+
+    <div class="pull-quote">
+      <p>"La migración de datos debe estar acompañada de un plan que contemple planeación, 
+      ejecución y validación de los datos migrados."</p>
+    </div>
+
+    <p>
+      Todo proceso de migración se realiza primero en un entorno de pruebas. Solo cuando 
+      sea exitoso y aprobado por el cliente, se procede al ambiente de producción, acompañado 
+      de un ticket de servicio y un documento de paso a producción con rollback definido.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECCIÓN 2: METODOLOGÍA -->
+  <section class="section">
+    <p class="section-label">02 — Metodología</p>
+    <h2>Las tres etapas del proceso</h2>
+    <p>
+      La metodología de migración de datos se estructura en tres grandes procesos que se ejecutan 
+      de forma secuencial y se retroalimentan entre sí.
+    </p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <h3>Planeación</h3>
+        <p>Define objetivos, alcance, estrategias, riesgos y factibilidad técnica y económica. 
+        Incluye cronograma, equipo humano, listas de chequeo y plan de contingencia. También 
+        contempla el análisis del esquema de datos actual versus el nuevo.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <h3>Migración</h3>
+        <p>Es la ejecución operativa. Se instalan herramientas, se aplican técnicas como el 
+        mapeador de campos, se gestionan restricciones y triggers, y se controla la codificación 
+        de caracteres para evitar pérdidas de información.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <h3>Validación</h3>
+        <p>Se verifican los resultados usando contadores de registros, reportes estadísticos y 
+        revisión por parte de los usuarios del sistema. La suma de registros exitosos y fallidos 
+        debe coincidir con el total original.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECCIÓN 3: TÉCNICAS -->
+  <section class="section">
+    <p class="section-label">03 — Técnicas</p>
+    <h2>Cuatro técnicas principales</h2>
+    <p>
+      Existen diversas técnicas para ejecutar una migración. La elección depende del motor de 
+      base de datos, el volumen de datos y los requerimientos del proyecto.
+    </p>
+
+    <div class="tecnicas-grid">
+      <div class="tecnica-card">
+        <div class="tecnica-num">01</div>
+        <h3>Sincronización de bases de datos</h3>
+        <p>Hace que dos bases de datos sean equivalentes al mismo tiempo, copiando datos y 
+        metadatos desde el origen al destino mediante asistentes del SMBD configurados 
+        con particiones y seguridad.</p>
+      </div>
+      <div class="tecnica-card">
+        <div class="tecnica-num">02</div>
+        <h3>Importación / exportación de archivos</h3>
+        <p>Uso de archivos planos, CSV o XML para mover datos entre plataformas. El formato 
+        CSV usa coma como delimitador y es ideal para hojas de cálculo; XML usa etiquetas 
+        como estándar de intercambio estructurado.</p>
+      </div>
+      <div class="tecnica-card">
+        <div class="tecnica-num">03</div>
+        <h3>Sentencias DML</h3>
+        <p>Uso de instrucciones SQL (SELECT, INSERT, UPDATE, DELETE) para trasladar datos 
+        entre bases de datos a través de los entornos administrativos de los SMBD, generando 
+        scripts reutilizables.</p>
+      </div>
+      <div class="tecnica-card">
+        <div class="tecnica-num">04</div>
+        <h3>Procedimientos ETCL</h3>
+        <p>Diseño y construcción de procedimientos técnicos de Extracción, Transformación, 
+        Carga y Limpieza. Sigue pasos definidos: selección de fuente, comprensión, filtrado, 
+        transformación, movimiento y documentación.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECCIÓN 4: ETCL -->
+  <section class="section">
+    <p class="section-label">04 — ETCL en detalle</p>
+    <h2>El proceso ETCL paso a paso</h2>
+    <p>
+      Los procedimientos ETCL son la esencia de la migración técnica. Se diseñan a partir 
+      del análisis de la migración y el mapeo de campos, contemplando todos los requerimientos 
+      de transformación.
+    </p>
+    <p>
+      En la fase de <strong>extracción</strong>, se identifican las fuentes de datos con 
+      participación activa de usuarios del negocio y el equipo de IT. Comprender la granularidad 
+      (nivel de tablas, campos y cruces) es fundamental para evitar errores.
+    </p>
+    <p>
+      La <strong>transformación</strong> incluye consultar, filtrar con cláusulas WHERE, y 
+      convertir los datos según las diferencias entre tipos de origen y destino. Las transformaciones 
+      deben poder deshacerse para garantizar un proceso seguro.
+    </p>
+    <p>
+      Finalmente, la <strong>carga</strong> mueve los datos usando Transact-SQL, procedimientos 
+      almacenados u otras herramientas, y concluye con pruebas, auditoría y documentación 
+      específica según el cronograma del proyecto.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECCIÓN 5: ESTRATEGIAS -->
+  <section class="section">
+    <p class="section-label">05 — Estrategias</p>
+    <h2>¿Cuál estrategia elegir?</h2>
+    <p>
+      Cada proyecto de migración tiene condiciones únicas. Aquí las cuatro estrategias 
+      más usadas según el contexto del negocio.
+    </p>
+
+    <div class="estrategias-list">
+      <div class="estrategia">
+        <div class="estrategia-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c84b2f" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/>
+          </svg>
+        </div>
+        <div>
+          <h3>Big-Bang</h3>
+          <p>Se migra la totalidad de los datos en una sola operación durante una ventana 
+          de mantenimiento definida. El sistema anterior se apaga el día estipulado y todos 
+          los usuarios pasan al nuevo sistema desde esa fecha.</p>
+        </div>
+      </div>
+      <div class="estrategia">
+        <div class="estrategia-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c84b2f" stroke-width="2" stroke-linecap="round">
+            <rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/>
+          </svg>
+        </div>
+        <div>
+          <h3>Ejecución en paralelo</h3>
+          <p>Los dos sistemas corren simultáneamente durante un período de tiempo. Los usuarios 
+          trabajan en el antiguo y se familiarizan con el nuevo, garantizando continuidad 
+          antes de desactivar el sistema previo.</p>
+        </div>
+      </div>
+      <div class="estrategia">
+        <div class="estrategia-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c84b2f" stroke-width="2" stroke-linecap="round">
+            <polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+        </div>
+        <div>
+          <h3>Migración incremental o por fases</h3>
+          <p>El nuevo sistema se activa gradualmente conforme se completan las migraciones 
+          por módulos o fases. No se espera a tener todo listo para comenzar la operación 
+          parcial del sistema destino.</p>
+        </div>
+      </div>
+      <div class="estrategia">
+        <div class="estrategia-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c84b2f" stroke-width="2" stroke-linecap="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <div>
+          <h3>Cero tiempos de inactividad</h3>
+          <p>Para procesos críticos que no pueden detenerse. Combina estrategias incrementales 
+          y paralelas para minimizar el tiempo de inactividad al mínimo posible, incluso 
+          en proyectos de meses de duración.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="tags">
+    <span class="tag">SQL</span>
+    <span class="tag">Bases de datos</span>
+    <span class="tag">ETCL</span>
+    <span class="tag">DML</span>
+    <span class="tag">SMBD</span>
+    <span class="tag">ADSI</span>
+    <span class="tag">SENA</span>
+    <span class="tag">Big-Bang</span>
+  </div>
+
+</main>
+
+<footer>
+  <p> Linkon Joel Vargas · Dylan Said Aguilar</p>
+</footer>
+
+</body>
+</html>
